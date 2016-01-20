@@ -36,6 +36,8 @@ class Map():
         for pos in self.exit_pos:
             self.board_grid[pos] = ExitTile(pos[0], pos[1])
 
+        self.get_tile(0, 0).is_visited = True
+
     def get_tile(self, x, y):
         return self.board_grid[(x, y)]
 
