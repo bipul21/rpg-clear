@@ -4,15 +4,6 @@ from random import randint
 
 class MapTile:
     is_visited = False
-    x = None
-    y = None
-
-    def __str__(self):
-        return "%s at (%d,%d)" % (self.__class__.__name__, self.x, self.y)
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
 
     def set_visited(self):
         self.is_visited = True

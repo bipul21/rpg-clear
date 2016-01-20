@@ -22,19 +22,19 @@ class Map():
         self.player = player
         for x in xrange(self.grid_size):
             for y in xrange(self.grid_size):
-                self.board_grid[(x, y)] = MapTile(x, y)
+                self.board_grid[(x, y)] = MapTile()
 
         print "Setting up bombs......"
         for pos in self.bomb_pos:
-            self.board_grid[pos] = BombTile(pos[0], pos[1])
+            self.board_grid[pos] = BombTile()
 
         print "Setting up Walls...."
         for pos in self.wall_tile:
-            self.board_grid[pos] = WallTile(pos[0], pos[1])
+            self.board_grid[pos] = WallTile()
 
         print "Setting up Exit Gate...."
         for pos in self.exit_pos:
-            self.board_grid[pos] = ExitTile(pos[0], pos[1])
+            self.board_grid[pos] = ExitTile()
 
         self.get_tile(0, 0).is_visited = True
 
