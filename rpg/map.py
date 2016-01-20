@@ -2,6 +2,11 @@ from rpg.exceptions import PlayerDiedException, GameWinException
 from rpg.tiles import BombTile, MapTile, WallTile, ExitTile
 
 
+## Map Class
+## Size is flexible
+## TODO : Random allocation of bombs, exit pos and wall pos
+
+
 class Map():
     grid_size = 12
     player = None

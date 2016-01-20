@@ -1,5 +1,6 @@
 from random import randint
 
+## Different types of tiles to lay out
 
 class MapTile:
     is_visited = False
