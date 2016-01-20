@@ -7,6 +7,8 @@ if __name__ == "__main__":
     name = raw_input("Please enter your name ?\n")
     player = Player(name)
     board = Map(player)
+    print "Initializing Player"
+    board.print_map()
     move_type = raw_input("Enter your move:\na for left, w for top, d for right, s for bottom, q for quit\n")
 
     while move_type != 'q':
