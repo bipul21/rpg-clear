@@ -1,23 +1,27 @@
+import random
+
 from rpg.exceptions import PlayerDiedException, GameWinException
 from rpg.tiles import BombTile, MapTile, WallTile, ExitTile
-
 
 ## Map Class
 ## Size is flexible
 ## TODO : Random allocation of bombs, exit pos and wall pos
 
+direction_order = ['w', 'd', 's', 'a']
+
 
 class Map():
     grid_size = 12
     player = None
-    bomb_pos = [(0, 3), (3, 8), (8, 3)]
     exit_pos = [(9, 9)]
-    wall_tile = [(1, 7), (2, 7), (5, 10), (6, 10), (2, 5), (3, 5), (4, 5), (5, 5), (6, 5)]
-    visited_junctions = []
-    visited_nodes = []
-
+    visit_stack = []
+    num_bombs = 5
+    num_walls = 20
     board_grid = {}
     is_won = False
+
+    def gen_pos(self):
+        return (random.randint(0, self.grid_size), random.randint(0, self.grid_size))
 
     def __init__(self, player):
         print "Initializing Map, Find your way out...."
@@ -27,11 +31,13 @@ class Map():
                 self.board_grid[(x, y)] = MapTile()
 
         print "Setting up bombs......"
-        for pos in self.bomb_pos:
+        for _ in xrange(self.num_bombs):
+            pos = self.gen_pos()
             self.board_grid[pos] = BombTile()
 
         print "Setting up Walls...."
-        for pos in self.wall_tile:
+        for _ in xrange(self.num_walls):
+            pos = self.gen_pos()
             self.board_grid[pos] = WallTile()
 
         print "Setting up Exit Gate...."
@@ -44,9 +50,6 @@ class Map():
         return self.board_grid[(x, y)]
 
     def print_map(self):
-        # print self.visited_junctions
-        # print self.visited_nodes
-
         for y in xrange(self.grid_size - 1, -1, -1):
             for x in xrange(self.grid_size):
                 if x == self.player.pos_x and y == self.player.pos_y:
@@ -55,57 +58,39 @@ class Map():
                     print self.board_grid[(x, y)].get_repr(),
             print
 
+    def is_valid_move(self, pos_x, pos_y):
+        if pos_x < 0 or pos_y < 0 or pos_x >= self.grid_size or pos_y >= self.grid_size:
+            return False
+
+        tile = self.get_tile(pos_x, pos_y)
+        if tile.is_visited:
+            return False
+        return True
+
     def get_move(self):
-        player_pos_x = self.player.pos_x
-        player_pos_y = self.player.pos_y
+        for direction in direction_order:
+            player_pos_x = self.player.pos_x
+            player_pos_y = self.player.pos_y
+            if direction == "a":
+                player_pos_x -= 1
+            elif direction == "w":
+                player_pos_y += 1
+            elif direction == "d":
+                player_pos_x += 1
+            elif direction == "s":
+                player_pos_y -= 1
+            if self.is_valid_move(player_pos_x, player_pos_y):
+                return player_pos_x,player_pos_y
+        new_pos = self.visit_stack.pop()
+        return new_pos[0],new_pos[1]
 
-        direction = self.player.get_direction()
-
-        if direction == "a":
-            player_pos_x -= 1
-        elif direction == "w":
-            player_pos_y += 1
-        elif direction == "d":
-            player_pos_x += 1
-        elif direction == "s":
-            player_pos_y -= 1
-
-        if player_pos_x < 0 or player_pos_y < 0 or player_pos_x >= self.grid_size or player_pos_y >= self.grid_size:
-            # self.visited_junctions.append((self.player.pos_x,self.player.pos_y))
-            self.player.change_direction()
-            return self.get_move()
-
-        tile = self.get_tile(player_pos_x, player_pos_y)
-
-        if tile.is_visited > 0:
-            self.visited_junctions.append((self.player.pos_x,self.player.pos_y))
-            self.player.change_direction()
-            return self.get_move()
-
-        if tile.is_visited == 0:
-            return direction
-
-    def get_next_move(self):
-        return self.get_move()
-
-    def move_player(self, move_type):
-        player_pos_x = self.player.pos_x
-        player_pos_y = self.player.pos_y
-        if move_type == "a":
-            player_pos_x -= 1
-        elif move_type == "w":
-            player_pos_y += 1
-        elif move_type == "d":
-            player_pos_x += 1
-        elif move_type == "s":
-            player_pos_y -= 1
-        if player_pos_x < 0 or player_pos_y < 0 or player_pos_x >= 12 or player_pos_y >= 12:
-            print "Cannot Move"
-            return
-
-        tile = self.get_tile(player_pos_x, player_pos_y)
-
+    def move_player(self, pos_x,pos_y):
+        tile = self.get_tile(pos_x, pos_y)
         tile_type = tile.__class__.__name__
+
+        if not tile.is_visited:
+            self.visit_stack.append((pos_x, pos_y))
+
         tile.set_visited()
 
         if tile_type == "WallTile":
@@ -118,9 +103,9 @@ class Map():
             if self.player.health <= 0:
                 raise PlayerDiedException
             print "Player Health now : %d" % self.player.health
+            return
         elif tile_type == "ExitTile":
             raise GameWinException
-        self.player.pos_y = player_pos_y
-        self.player.pos_x = player_pos_x
-        self.visited_nodes.append((self.player.pos_x,self.player.pos_y))
+        self.player.pos_x = pos_x
+        self.player.pos_y = pos_y
         print self.player.print_pos()

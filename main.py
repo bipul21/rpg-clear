@@ -13,10 +13,10 @@ if __name__ == "__main__":
 
     while True:
         try:
-            move_type = board.get_next_move()
-            board.move_player(move_type)
+            pos_x, pos_y = board.get_move()
+            board.move_player(pos_x,pos_y)
             board.print_map()
-            raw_input("Enter your move:\n")
+            raw_input("Press Any Key For Next Move")
         except PlayerDiedException:
             print "You Died! Game Over!"
             break

@@ -3,10 +3,10 @@ from random import randint
 ## Different types of tiles to lay out
 
 class MapTile:
-    is_visited = 0
+    is_visited = False
 
     def set_visited(self):
-        self.is_visited += 1
+        self.is_visited = True
 
     def get_repr(self):
         if self.is_visited:
