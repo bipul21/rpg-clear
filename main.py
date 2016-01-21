@@ -9,13 +9,14 @@ if __name__ == "__main__":
     board = Map(player)
     print "Initializing Player"
     board.print_map()
-    move_type = raw_input("Enter your move:\na for left, w for top, d for right, s for bottom, q for quit\n")
+    # move_type = raw_input("Enter your move:\na for left, w for top, d for right, s for bottom, q for quit\n")
 
-    while move_type != 'q':
+    while True:
         try:
+            move_type = board.get_next_move()
             board.move_player(move_type)
             board.print_map()
-            move_type = raw_input("Enter your move:\n")
+            raw_input("Enter your move:\n")
         except PlayerDiedException:
             print "You Died! Game Over!"
             break
