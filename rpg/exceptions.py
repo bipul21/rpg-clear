@@ -5,3 +5,6 @@ class PlayerDiedException(Exception):
 
 class GameWinException(Exception):
     pass
+
+class NoPathException(Exception):
+    pass

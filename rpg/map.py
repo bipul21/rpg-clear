@@ -108,4 +108,4 @@ class Map():
             raise GameWinException
         self.player.pos_x = pos_x
         self.player.pos_y = pos_y
-        print self.player.print_pos()
+        # print self.player.print_pos()
